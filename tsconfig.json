@@ -1,14 +1,12 @@
 {
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "compilerOptions": {
     "alwaysStrict": true,
-    "target": "ES6",
+    "module": "esnext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "module": "commonjs",
     "strict": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
@@ -16,6 +14,5 @@
     "typeRoots": ["./src/types", "node_modules/@types"],
     "rootDirs": ["src"],
     "outDir": "dist"
-  },
+  }
 }
-  

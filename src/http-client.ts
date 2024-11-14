@@ -67,7 +67,7 @@ export function gsocSubscribe(baseUrl: string, address: string, handler: Subscri
   }
 
   ws.onmessage = async ev => {
-    const data = prepareWebsocketData(ev.data)
+    const data = await prepareWebsocketData(ev.data)
 
     // ignore empty messages
     if (data.length > 0) {
@@ -223,12 +223,14 @@ function assertSubscriptionHandler(value: unknown): asserts value is Subscriptio
   }
 }
 
-function prepareWebsocketData(data: unknown): Uint8Array | never {
+async function prepareWebsocketData(data: unknown): Promise<Uint8Array | never> {
   if (typeof data === 'string') return new TextEncoder().encode(data)
 
   if (data instanceof Buffer) return new Uint8Array(data)
 
   if (data instanceof ArrayBuffer) return new Uint8Array(data)
+
+  if (data instanceof Blob) return new Uint8Array(await data.arrayBuffer())
 
   throw new TypeError('unknown websocket data type')
 }

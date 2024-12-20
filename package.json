@@ -1,6 +1,6 @@
 {
-  "name": "@anythread/gsoc",
-  "version": "0.2.2",
+  "name": "@solarpunkltd/gsoc",
+  "version": "0.2.3",
   "description": "Graffiti Several Owner Chunk implementation on Swarm network",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,10 +29,6 @@
     "url": "https://github.com/anythread/gsoc/issues"
   },
   "homepage": "https://github.com/anythread/gsoc#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/anythread/gsoc.git"
-  },
   "dependencies": {
     "@nugaon/bmt-js": "^3.0.2",
     "axios": "^1.7.2",

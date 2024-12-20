@@ -1,4 +1,9 @@
-import { gsocSubscribe, SubscriptionHandler, uploadSingleOwnerChunkData } from './http-client'
+import {
+  BeeRequestOptions,
+  gsocSubscribe,
+  SubscriptionHandler,
+  uploadSingleOwnerChunkData,
+} from './http-client'
 import { makeSOCAddress, SingleOwnerChunk } from './soc'
 import { Bytes, Data, HexString, PostageBatchId, PostageStamp, SignerFn } from './types'
 import {
@@ -102,13 +107,14 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
   async write(
     data: UserPayload,
     resourceId: string | Uint8Array = DEFAULT_RESOURCE_ID,
+    requestOptions?: BeeRequestOptions,
   ): Promise<SingleOwnerChunk> {
     this.assertGraffitiRecord(data)
     const graffitiKey = getConsensualPrivateKey(resourceId)
     const graffitiSigner = makeSigner(graffitiKey)
 
     return uploadSingleOwnerChunkData(
-      { baseURL: this.beeApiUrl },
+      { baseURL: this.beeApiUrl, ...requestOptions },
       this.postage,
       graffitiSigner,
       this.consensusHash,

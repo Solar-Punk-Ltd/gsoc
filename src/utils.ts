@@ -1,4 +1,13 @@
-import { Bytes, Data, HexString, PostageBatchId, PostageStamp, PrefixedHexString, SignerFn } from './types'
+import {
+  Bytes,
+  Data,
+  FlexBytes,
+  HexString,
+  PostageBatchId,
+  PostageStamp,
+  PrefixedHexString,
+  SignerFn,
+} from './types'
 import { Utils } from '@nugaon/bmt-js'
 // For ESM compatibility
 import pkg from 'elliptic'
@@ -358,4 +367,23 @@ export function wrapBytesWithHelpers(data: Uint8Array): Data {
  */
 export function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   return a.length === b.length && a.every((value, index) => value === b[index])
+}
+
+/**
+ * Return flex bytes starting from `offset`
+ *
+ * @param data   The original data
+ * @param offset The offset to start from
+ * @param _min   The minimum size of the data
+ * @param _max   The maximum size of the data
+ */
+export function flexBytesAtOffset<Min extends number, Max extends number>(
+  data: Uint8Array,
+  offset: number,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _min: Min,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _max: Max,
+): FlexBytes<Min, Max> {
+  return data.slice(offset) as FlexBytes<Min, Max>
 }

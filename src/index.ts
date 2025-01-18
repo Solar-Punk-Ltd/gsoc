@@ -1,3 +1,4 @@
+import { MAX_PAYLOAD_SIZE, MIN_PAYLOAD_SIZE, SOC_PAYLOAD_OFFSET } from './contants'
 import {
   BeeRequestOptions,
   downloadSingleOwnerChunkData,
@@ -9,6 +10,7 @@ import { makeSOCAddress, SingleOwnerChunk } from './soc'
 import { Bytes, Data, HexString, PostageBatchId, PostageStamp, SignerFn } from './types'
 import {
   bytesToHex,
+  flexBytesAtOffset,
   getConsensualPrivateKey,
   hexToBytes,
   inProximity,
@@ -16,6 +18,7 @@ import {
   keccak256Hash,
   makeSigner,
   serializePayload,
+  wrapBytesWithHelpers,
 } from './utils'
 
 export const DEFAULT_RESOURCE_ID = 'any'
@@ -102,17 +105,19 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
   async getLatestGsocData(
     resourceId: string | Uint8Array = DEFAULT_RESOURCE_ID,
     requestOptions?: BeeRequestOptions,
-  ): Promise<Record<string, unknown>> {
+  ): Promise<Data> {
     const graffitiKey = getConsensualPrivateKey(resourceId)
     const graffitiSigner = makeSigner(graffitiKey)
 
-    const res = await downloadSingleOwnerChunkData(
+    const data = await downloadSingleOwnerChunkData(
       { baseURL: this.beeApiUrl, ...requestOptions },
       graffitiSigner,
       this.consensusHash,
     )
 
-    return res.json()
+    const payload = flexBytesAtOffset(data, SOC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
+
+    return wrapBytesWithHelpers(new Uint8Array(payload))
   }
 
   /**

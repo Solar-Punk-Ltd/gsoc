@@ -113,3 +113,16 @@ export interface PostageBatchOptions {
    */
   waitForUsableTimeout?: number
 }
+
+/**
+ * Helper type for dealing with flexible sized byte arrays.
+ *
+ * The actual min and and max values are not stored in runtime, they
+ * are only there to differentiate the type from the Uint8Array at
+ * compile time.
+ * @see BrandedType
+ */
+export interface FlexBytes<Min extends number, Max extends number> extends Uint8Array {
+  readonly __min__: Min
+  readonly __max__: Max
+}

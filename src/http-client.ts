@@ -138,7 +138,7 @@ async function uploadSoc(
  * @param hash Bee content reference
  *
  */
-export async function downloadChunk(requestOptions: BeeRequestOptions, hash: string): Promise<Data> {
+export async function downloadChunk(requestOptions: BeeRequestOptions, hash: string): Promise<Uint8Array> {
   const response = await http<ArrayBuffer>({
     ...requestOptions,
     method: 'get',
@@ -146,7 +146,7 @@ export async function downloadChunk(requestOptions: BeeRequestOptions, hash: str
     responseType: 'arraybuffer',
   })
 
-  return wrapBytesWithHelpers(new Uint8Array(response.data))
+  return new Uint8Array(response.data)
 }
 
 /**

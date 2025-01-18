@@ -1,6 +1,6 @@
 {
   "name": "@solarpunkltd/gsoc",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Graffiti Several Owner Chunk implementation on Swarm network",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

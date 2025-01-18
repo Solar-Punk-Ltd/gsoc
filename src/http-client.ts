@@ -1,7 +1,7 @@
 import { makeChunk } from '@nugaon/bmt-js'
 import WebSocket from 'isomorphic-ws'
 import { Bytes, Data, PostageBatchId, PostageBatchOptions, PostageStamp, Reference, SignerFn } from './types'
-import { makeSingleOwnerChunk, SingleOwnerChunk } from './soc'
+import { makeSingleOwnerChunk, makeSOCAddress, SingleOwnerChunk } from './soc'
 import {
   bytesToHex,
   isPostageBatchId,
@@ -34,6 +34,17 @@ export async function uploadSingleOwnerChunkData(
   await uploadSoc(requestOptions, owner, id, signature, data, postageBatchId, options)
 
   return soc
+}
+
+export async function downloadSingleOwnerChunkData(
+  requestOptions: BeeRequestOptions,
+  signer: SignerFn,
+  identifier: Bytes<32>,
+) {
+  const address = makeSOCAddress(identifier, signer.address)
+  const addressHex = bytesToHex(address)
+
+  return downloadChunk(requestOptions, addressHex)
 }
 
 /**
@@ -118,6 +129,24 @@ async function uploadSoc(
   })
 
   return response.data.reference
+}
+
+/**
+ * Download chunk data as a byte array
+ *
+ * @param requestOptions Options for making requests
+ * @param hash Bee content reference
+ *
+ */
+export async function downloadChunk(requestOptions: BeeRequestOptions, hash: string): Promise<Data> {
+  const response = await http<ArrayBuffer>({
+    ...requestOptions,
+    method: 'get',
+    url: `chunks/${hash}`,
+    responseType: 'arraybuffer',
+  })
+
+  return wrapBytesWithHelpers(new Uint8Array(response.data))
 }
 
 /**

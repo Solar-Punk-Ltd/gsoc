@@ -1,5 +1,6 @@
 import {
   BeeRequestOptions,
+  downloadSingleOwnerChunkData,
   gsocSubscribe,
   SubscriptionHandler,
   uploadSingleOwnerChunkData,
@@ -96,6 +97,22 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
     gsocAddress: Bytes<32>
   } {
     return this.subscribe(messageHandler, resourceId)
+  }
+
+  async getLatestGsocData(
+    resourceId: string | Uint8Array = DEFAULT_RESOURCE_ID,
+    requestOptions?: BeeRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    const graffitiKey = getConsensualPrivateKey(resourceId)
+    const graffitiSigner = makeSigner(graffitiKey)
+
+    const res = await downloadSingleOwnerChunkData(
+      { baseURL: this.beeApiUrl, ...requestOptions },
+      graffitiSigner,
+      this.consensusHash,
+    )
+
+    return res.json()
   }
 
   /**

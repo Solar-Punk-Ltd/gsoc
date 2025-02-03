@@ -129,6 +129,7 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
   async write(
     data: UserPayload,
     resourceId: string | Uint8Array = DEFAULT_RESOURCE_ID,
+    stamp?: PostageBatchId | PostageStamp,
     requestOptions?: BeeRequestOptions,
   ): Promise<SingleOwnerChunk> {
     this.assertGraffitiRecord(data)
@@ -137,7 +138,7 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
 
     return uploadSingleOwnerChunkData(
       { baseURL: this.beeApiUrl, ...requestOptions },
-      this.postage,
+      stamp || this.postage,
       graffitiSigner,
       this.consensusHash,
       serializePayload(data),

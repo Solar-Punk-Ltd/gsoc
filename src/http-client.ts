@@ -55,7 +55,7 @@ export async function downloadSingleOwnerChunkData(
  *
  * @returns close() function on websocket connection
  */
-export function gsocSubscribe(baseUrl: string, address: string, handler: SubscriptionHandler): () => void {
+export function gsocSubscribe(baseUrl: string, address: string, handler: SubscriptionHandler): WebSocket {
   assertSubscriptionHandler(handler)
 
   if (typeof address !== 'string' || address.length !== 64) {
@@ -63,19 +63,6 @@ export function gsocSubscribe(baseUrl: string, address: string, handler: Subscri
   }
 
   const ws = webSocket(baseUrl, `gsoc/subscribe/${address}`)
-
-  let closed = false
-  const close = () => {
-    if (closed === false) {
-      closed = true
-
-      // although the WebSocket API offers a `close` function, it seems that
-      // with the library that we are using (isomorphic-ws) it doesn't close
-      // the websocket properly, whereas `terminate` does
-      if (ws.terminate) ws.terminate()
-      else ws.close() // standard Websocket in browser does not have terminate function
-    }
-  }
 
   ws.onmessage = async ev => {
     const data = await prepareWebsocketData(ev.data)
@@ -92,7 +79,7 @@ export function gsocSubscribe(baseUrl: string, address: string, handler: Subscri
     }
   }
 
-  return close
+  return ws
 }
 
 /**

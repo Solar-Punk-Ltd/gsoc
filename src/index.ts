@@ -1,3 +1,4 @@
+import WebSocket from 'isomorphic-ws'
 import { MAX_PAYLOAD_SIZE, MIN_PAYLOAD_SIZE, SOC_PAYLOAD_OFFSET } from './contants'
 import {
   BeeRequestOptions,
@@ -62,7 +63,7 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
     messageHandler: SubscriptionHandler<UserPayload>,
     resourceId: string | Uint8Array = DEFAULT_RESOURCE_ID,
   ): {
-    close: () => void
+    ws: WebSocket
     gsocAddress: Bytes<32>
   } {
     const graffitiKey = getConsensualPrivateKey(resourceId)
@@ -81,10 +82,10 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
       },
       onError: messageHandler.onError,
     }
-    const close = gsocSubscribe(this.beeApiUrl, bytesToHex(gsocAddress), insiderHandler)
+    const ws = gsocSubscribe(this.beeApiUrl, bytesToHex(gsocAddress), insiderHandler)
 
     return {
-      close,
+      ws,
       gsocAddress,
     }
   }
@@ -96,7 +97,7 @@ export class InformationSignal<UserPayload = InformationSignalRecord> {
     messageHandler: SubscriptionHandler<UserPayload>,
     resourceId: string | Uint8Array = DEFAULT_RESOURCE_ID,
   ): {
-    close: () => void
+    ws: WebSocket
     gsocAddress: Bytes<32>
   } {
     return this.subscribe(messageHandler, resourceId)
